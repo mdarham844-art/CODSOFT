@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Calculator</title>
+  <style>
+    /* Center everything on the page */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #eee;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Calculator container */
+    .calculator {
+      width: 300px;
+      background-color: #222;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #000;
+    }
+
+    /* Screen where numbers and results show */
+    #display {
+      background-color: #111;
+      color: white;
+      font-size: 2rem;
+      padding: 15px;
+      text-align: right;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      min-height: 50px;
+    }
+
+    /* Buttons arranged in grid */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    /* Style for all buttons */
+    button {
+      padding: 15px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #444;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Buttons for operations have distinct color */
+    .operator {
+      background-color: #f57c00;
+    }
+
+    /* Clear button */
+    #clear {
+      background-color: #d32f2f;
+    }
+
+    /* Equals button: spans all columns */
+    #equals {
+      grid-column: span 4;
+      background-color: #388e3c;
+      font-weight: bold;
+    }
+
+    /* Buttons hover effect */
+    button:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <!-- Display area -->
+    <div id="display">0</div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button class="operator">/</button>
+
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="operator">*</button>
+
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button class="operator">-</button>
+
+      <button>0</button>
+      <button>.</button>
+      <button id="clear">C</button>
+      <button class="operator">+</button>
+
+      <button id="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    // Getting references to display and buttons
+    var display = document.getElementById('display');
+    var buttons = document.querySelectorAll('.buttons button');
+
+    // Variables to hold calculation data
+    var firstNumber = '';
+    var secondNumber = '';
+    var currentOperator = '';
+    var isSecondNumber = false;
+
+    // Go through all the buttons and add click listeners
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function() {
+        var btnValue = this.textContent;
+
+        // If button is a number or decimal
+        if ((btnValue >= '0' && btnValue <= '9') || btnValue === '.') {
+          if (!isSecondNumber) {
+            // If display is zero, replace it, else add
+            if (display.textContent === '0') {
+              display.textContent = btnValue;
+            } else {
+              display.textContent += btnValue;
+            }
+          } else {
+            // Starting to type second number
+            display.textContent = btnValue;
+            isSecondNumber = false;
+          }
+        }
+        // If button is an operator
+        else if (btnValue === '+' || btnValue === '-' || btnValue === '*' || btnValue === '/') {
+          firstNumber = display.textContent;
+          currentOperator = btnValue;
+          isSecondNumber = true; // Next typed number is the second number
+        }
+        // If equals button
+        else if (btnValue === '=') {
+          secondNumber = display.textContent;
+
+          // Convert strings to numbers
+          var num1 = parseFloat(firstNumber);
+          var num2 = parseFloat(secondNumber);
+          var result;
+
+          // Calculate result based on operator
+          if (currentOperator === '+') {
+            result = num1 + num2;
+          } else if (currentOperator === '-') {
+            result = num1 - num2;
+          } else if (currentOperator === '*') {
+            result = num1 * num2;
+          } else if (currentOperator === '/') {
+            if (num2 === 0) {
+              result = 'Error';
+            } else {
+              result = num1 / num2;
+            }
+          } else {
+            result = num2; // No operator, just show current number
+          }
+
+          display.textContent = result;
+          // Reset for new calculation
+          firstNumber = '';
+          secondNumber = '';
+          currentOperator = '';
+          isSecondNumber = false;
+        }
+        // If clear button
+        else if (btnValue === 'C') {
+          display.textContent = '0';
+          firstNumber = '';
+          secondNumber = '';
+          currentOperator = '';
+          isSecondNumber = false;
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
